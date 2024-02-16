@@ -1,36 +1,40 @@
 import allure
 
-from conftest import driver, login, create_and_delete_user
-from locators.main_page_locators import MainPageLocators
+from conftest import driver, login
 from pages.main_page import MainPage
 
 
 class TestMainPage:
+
     @allure.title('Проверка появления всплывающего окна после клика по ингредиенту')
     def test_open_ingredient_popup(self, driver):
-        MainPage(driver).click_on_bun()
-        popup_text = MainPage(driver).get_text_of_element(MainPageLocators.INGREDIENT_POPUP_TITLE)
+        main_page = MainPage(driver)
+        main_page.click_on_bun()
+        popup_text = main_page.get_text_of_element_ingredient_popup_title()
         assert popup_text == "Детали ингредиента"
 
-    @allure.title('Проверка закрытия всплывающего окна ингредиента кликом по крестику')
+    @allure.title('Проверка закрытия всплывающего окна Детали ингредиента кликом по крестику')
     def test_close_ingredient_popup_window(self, driver):
-        MainPage(driver).click_on_bun()
-        MainPage(driver).click_close_btn()
-        MainPage(driver).check_invisibility(MainPageLocators.INGREDIENT_POPUP)
-        assert MainPage(driver).check_element(MainPageLocators.INGREDIENT_POPUP).is_displayed() == False
+        main_page = MainPage(driver)
+        main_page.click_on_bun()
+        main_page.click_close_btn()
+        main_page.check_invisibility_ingredient_popup()
+        assert main_page.check_element_ingredient_popup().is_displayed() == False
 
     @allure.title('Проверка изменения счетчика ингредиента')
     def test_change_ingredient_counter(self, driver):
-        start_quantity = MainPage(driver).check_counter_of_ingredients()
-        MainPage(driver).add_filling_to_order_basket()
-        end_quantity = MainPage(driver).check_counter_of_ingredients()
+        main_page = MainPage(driver)
+        start_quantity = main_page.check_counter_of_ingredients()
+        main_page.add_filling_to_order_basket()
+        end_quantity = main_page.check_counter_of_ingredients()
         assert end_quantity > start_quantity
 
     @allure.title('Проверка создания заказа')
     def test_make_order(self, driver, login):
-        MainPage(driver).find_element(MainPageLocators.INGREDIENT_BUN)
-        MainPage(driver).add_bun_to_order_basket()
-        MainPage(driver).add_sauce_to_order_basket()
-        MainPage(driver).click_order_btn()
-        MainPage(driver).find_element(MainPageLocators.ORDER_NUMBER)
-        assert MainPage(driver).check_element(MainPageLocators.ORDER_STATUS_TEXT).is_displayed() == True
+        main_page = MainPage(driver)
+        main_page.find_element_ingredient_bun()
+        main_page.add_bun_to_order_basket()
+        main_page.add_sauce_to_order_basket()
+        main_page.click_order_btn()
+        main_page.find_element_order_number()
+        assert main_page.check_element_order_status_text().is_displayed() == True

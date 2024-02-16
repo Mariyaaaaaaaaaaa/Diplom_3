@@ -3,6 +3,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ActionChains
 
+from locators.main_page_locators import MainPageLocators
+from locators.orders_page_locators import OrdersPageLocators
+from locators.password_recovery_locators import PasswordRecoverLocators
+from locators.user_account_locators import UserAccountLocators
+
 
 class BasePage:
     def __init__(self, driver):
@@ -12,6 +17,32 @@ class BasePage:
     def find_element(self, locator):
         return WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(locator))
 
+    @allure.step('Поиск флюоресцентной булки')
+    def find_element_ingredient_bun(self):
+        return WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(MainPageLocators.INGREDIENT_BUN))
+
+    @allure.step('Поиск номера заказа')
+    def find_element_order_number(self):
+        return WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(MainPageLocators.ORDER_NUMBER))
+
+    @allure.step('Поиск статуса заказа в истории')
+    def find_element_order_status(self):
+        return WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(UserAccountLocators.ORDER_STATUS))
+
+    @allure.step('Поиск заголовка "Лента заказов"')
+    def find_element_order_list_title(self):
+        return WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(OrdersPageLocators.ORDERS_LIST_TITLE))
+
+    @allure.step('Поиск кнопки "Сохранить"')
+    def find_element_save_btn(self):
+        return WebDriverWait(self.driver, 15).until(
+            EC.visibility_of_element_located(PasswordRecoverLocators.SAVE_BTN))
+
+    @allure.step('Поиск активного поля ввода пароля')
+    def find_element_input_password_active(self):
+        return WebDriverWait(self.driver, 15).until(
+            EC.visibility_of_element_located(PasswordRecoverLocators.INPUT_PASSWORD_ACTIVE))
+
     @allure.step('Клик по элементу')
     def click_to_element(self, locator):
         WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(locator))
@@ -20,6 +51,14 @@ class BasePage:
     @allure.step('Получение текста элемента')
     def get_text_of_element(self, locator):
         return self.driver.find_element(*locator).text
+
+    @allure.step('Получение текста заголовка всплывающего окна "Детали ингредиента"')
+    def get_text_of_element_ingredient_popup_title(self):
+        return self.driver.find_element(*MainPageLocators.INGREDIENT_POPUP_TITLE).text
+
+    @allure.step('Получение текста кнопки "Войти"')
+    def get_text_of_element_enter_btn(self):
+        return self.driver.find_element(*UserAccountLocators.ENTER_BTN).text
 
     @allure.step('Вставить текст {text}')
     def set_text_to_element(self, locator, text):
@@ -35,13 +74,60 @@ class BasePage:
         WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(locator))
         return self.driver.find_element(*locator)
 
+    @allure.step('Проверка отображения всплывающего окна Детали ингредиента на странице')
+    def check_element_ingredient_popup(self):
+        WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(MainPageLocators.INGREDIENT_POPUP))
+        return self.driver.find_element(*MainPageLocators.INGREDIENT_POPUP)
+
+    @allure.step('Проверка отображения всплывающего окна "Ваш заказ начали готовить"')
+    def check_element_order_status_text(self):
+        WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(MainPageLocators.ORDER_STATUS_TEXT))
+        return self.driver.find_element(*MainPageLocators.ORDER_STATUS_TEXT)
+
+    @allure.step('Проверка отображения заголовка "Состав" в окне с деталями заказа')
+    def check_element_order_structure_title(self):
+        WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(OrdersPageLocators.ORDER_STRUCTURE_TITLE))
+        return self.driver.find_element(*OrdersPageLocators.ORDER_STRUCTURE_TITLE)
+
     @allure.step('Проверка невидимости элемента на странице')
     def check_invisibility(self, locator):
         return WebDriverWait(self.driver, 15).until(EC.invisibility_of_element(locator))
 
+    @allure.step('Проверка невидимости всплывающего окна Детали ингредиента на странице')
+    def check_invisibility_ingredient_popup(self):
+        return WebDriverWait(self.driver, 15).until(EC.invisibility_of_element(MainPageLocators.INGREDIENT_POPUP))
+
     @allure.step('Ожидание видимости элемента на странице')
     def wait_visibility_element(self, locator):
         WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(locator))
+
+    @allure.step('Ожидание видимости заголовка "Лента заказов" на странице')
+    def wait_visibility_element_orders_list_title(self):
+        WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(OrdersPageLocators.ORDERS_LIST_TITLE))
+
+    @allure.step('Ожидание видимости заголовка "Соберите бургер" на странице')
+    def wait_visibility_element_burger_construction_title(self):
+        WebDriverWait(self.driver, 15).until(EC.visibility_of_element_located(MainPageLocators.BURGER_CONSTRUCTOR_TITLE))
+
+    @allure.step('Ожидание видимости "Все текущие заказы готовы" на странице')
+    def wait_visibility_element_all_order_ready(self):
+        WebDriverWait(self.driver, 15).until(
+            EC.visibility_of_element_located(OrdersPageLocators.ALL_ORDERS_READY))
+
+    @allure.step('Ожидание видимости номера заказа в работе на странице')
+    def wait_visibility_element_order_in_work(self):
+        WebDriverWait(self.driver, 15).until(
+            EC.visibility_of_element_located(OrdersPageLocators.ORDER_IN_WORK))
+
+    @allure.step('Ожидание видимости профиля пользователя на странице')
+    def wait_visibility_element_profile_btn(self):
+        WebDriverWait(self.driver, 15).until(
+            EC.visibility_of_element_located(UserAccountLocators.PROFILE_BTN))
+
+    @allure.step('Ожидание видимости кнопки "Войти" на странице')
+    def wait_visibility_element_enter_btn(self):
+        WebDriverWait(self.driver, 15).until(
+            EC.visibility_of_element_located(UserAccountLocators.ENTER_BTN))
 
     @allure.step('Ожидание невидимости элемента на странице')
     def wait_invisibility_element(self, locator):
